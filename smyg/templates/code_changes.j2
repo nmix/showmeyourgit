@@ -1,0 +1,13 @@
+Ratio (%):      {{ "%5.0f"|format(ctx.ratio) }}
+Added lines:    {{ "%5d"|format(ctx.added)  }}
+Deleted lines:  {{ "%5d"|format(ctx.deleted) -}}
+{% if ctx.files %}
+Ratio (%) | Added | Deleted | File Path
+----------|-------|---------|----------
+{%- for file in ctx.files %}
+{{ "%9.2f"|format(file[3]) -}}
+{{ "%8d"|format(file[1]) -}}
+{{ "%10d"|format(file[2]) -}}
+{{ file[0] | indent(2, true) -}}
+{% endfor -%}
+{% endif %}

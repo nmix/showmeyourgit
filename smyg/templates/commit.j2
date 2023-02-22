@@ -1,0 +1,6 @@
+{{ ctx.hash }} | {{ ctx.msg }}
+{{ ctx.author_date }} | {{ ctx.author_name }}
+{{ ctx.branches }}
+Added lines:    {{ "%5d"|format(ctx.added)  }}
+Deleted lines:  {{ "%5d"|format(ctx.deleted) }}
+Changed files:  {{ "%5d"|format(ctx.changed_files) }}
