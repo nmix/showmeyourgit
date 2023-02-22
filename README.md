@@ -4,7 +4,7 @@
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install smyg.
 
 ```bash
 pip install --user smyg
@@ -241,8 +241,8 @@ commits_total{author_email="nn.mikh@yandex.ru",author_name="Nikolay Mikhaylichen
 ```bash
 git clone git@github.com:nmix/showmeyourgit.git
 cd showmeyourgit
-pipenv install --dev
-pipenv shell
+poetry install
+poetry shell
 pytest
 ```
 
