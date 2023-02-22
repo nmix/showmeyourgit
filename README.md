@@ -7,7 +7,7 @@
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
 ```bash
-pip install smyg
+pip install --user smyg
 ```
 
 ## Usage
@@ -74,6 +74,9 @@ If we know last commit of previous bundle then we take all commits after that. I
 If we dont have previous commit then we take only commits for *single* branch. *Signle* branch means that commit belongs only one branch. **Here it is mandatory to have a complete local copy of the repository with all branches.**
 
 ```bash
+# --- show command help
+$ smyg branch-commits --help
+
 # --- if you just clone the example repository, the entire commit list will be displayed (from Initial commit)
 #     this is because only one branch is locally received and all commits belongs to it
 smyg branch-commits
@@ -154,6 +157,9 @@ Changed files:      1
 Show total added and deleted lines count for current ref.
 
 ```bash
+# --- show command help
+$ smyg codechanges --help
+
 # --- changes for current ref
 smyg codechanges
 Ratio (%):         11
@@ -175,6 +181,9 @@ Show count of added lines and count of deleted lines from those that were added.
 > Ideally, it should coincide with the codechanges for whole project history. For complex branching it may slightly different.
 
 ```bash
+# --- show command help
+$ smyg codechurn --help
+
 # --- churn for current ref (equal with codechanges, it is expected)
 smyg codechurn
 Ratio (%):         11

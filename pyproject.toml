@@ -1,0 +1,47 @@
+[build-system]
+requires = ['poetry-core>=1.0.0']
+build-backend = 'poetry.core.masonry.api'
+
+[tool.poetry]
+name = 'smyg'
+version = '0.4.0'
+description = 'git metric calculation'
+
+license = 'MIT'
+
+authors = [
+  'Nikolay Mikhaylichenko <nn.mikh@yandex.ru>',
+]
+
+readme = 'README.md'
+
+homepage = 'https://github.com/nmix/showmeyourgit'
+
+repository = 'https://github.com/nmix/showmeyourgit'
+
+keywords = ['git', 'metrics']
+
+classifiers = [
+    'Programming Language :: Python :: 3',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+]
+
+[tool.poetry.dependencies]
+python = '^3.7'
+typer = '^0.7.0'
+pydriller = '^2.3'
+rich = '^13.1.0'
+jinja2 = '^3.1.2'
+prometheus-client = '^0.16'
+python-dateutil = '^2.8.2'
+
+[tool.poetry.group.dev.dependencies]
+pytest = '*'
+pytest-cov = '*'
+ipython = '*'
+pylint = '*'
+pytest-freezegun = '*'
+
+[tool.poetry.scripts]
+smyg = 'smyg.cli:app'

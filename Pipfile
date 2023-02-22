@@ -17,9 +17,6 @@ pytest-cov = "*"
 ipython = "*"
 pylint = "*"
 pytest-freezegun = "*"
-build = "*"
-twine = "*"
-setuptools = "*"
 
 [requires]
 python_version = "3.10"
