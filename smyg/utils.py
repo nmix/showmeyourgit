@@ -29,6 +29,7 @@ def date_from_relative(past: str) -> datetime:
 
 def convert_to_edge(modified_files: List[vcs.ModifiedFile]
                     ) -> List[vcs.EdgeFile]:
+    '''convert modified files to edge files'''
     edge_files = []
     for modified_file in modified_files:
         for edge_file in edge_files:
