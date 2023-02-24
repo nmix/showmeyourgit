@@ -1,5 +1,5 @@
 {% for commit in ctx %}
-{{ commit.hash }} | {{ commit.msg }}
+{{ commit.sha }} | {{ commit.msg }}
 {{ commit.author_date }} | {{ commit.author_name }}
 {{ commit.branches }}
 Added lines:    {{ "%5d"|format(commit.added)  }}

@@ -62,7 +62,7 @@ def branch_commits(
         raise typer.Exit(err)
 
     typer.echo(
-            formatter.format(
+            formatter.render(
                 [commit.as_seriable_dict() for commit in commits],
                 output,
                 'commits'
@@ -105,14 +105,14 @@ def commit(
     '''Show commit info'''
     path = os.path.abspath(repo_path)
     try:
-        vcs_commit = binding.commit(path, hash=sha, branch=branch)
+        vcs_commit = binding.find_commit(path, sha=sha, branch=branch)
     except binding.BindingError as err:
         raise typer.Exit(err)
     typer.echo(
-            formatter.format(vcs_commit.as_seriable_dict(), output, 'commit'))
+            formatter.render(vcs_commit.as_seriable_dict(), output, 'commit'))
     if push_metrics:
         try:
-            prom.push_commits(commit.as_seriable_dict())
+            prom.push_commits(vcs_commit.as_seriable_dict())
         except prom.PushGatewayError as err:
             raise typer.Exit(err)
 
@@ -184,7 +184,6 @@ def codechanges(
             help='push metrics to prometheus gateway'),
             ):
     '''This metric measures the code changes of each files.'''
-    # pylint: disable=too-many-arguments,too-many-locals
 
     path = os.path.abspath(repo_path)
     if for_past:
@@ -204,7 +203,7 @@ def codechanges(
     except binding.BindingError as err:
         raise typer.Exit(err)
     metrics = cch.CodeChanges(modified_files).calculate(detail=detail)
-    typer.echo(formatter.format(metrics, output, 'code_changes'))
+    typer.echo(formatter.render(metrics, output, 'code_changes'))
     if push_metrics:
         try:
             prom.push_codechanges(metrics,
@@ -280,7 +279,6 @@ def codechurn(
             help='push metrics to prometheus gateway'),
         ):
     '''This metric measures the code churns of each file.'''
-    # pylint: disable=too-many-arguments,too-many-locals
 
     path = os.path.abspath(repo_path)
     if for_past:
@@ -301,7 +299,7 @@ def codechurn(
         raise typer.Exit(err)
     code_churn = cc.CodeChurn(modified_files)
     metrics = code_churn.calculate(detail=detail)
-    typer.echo(formatter.format(metrics, output, 'code_changes'))
+    typer.echo(formatter.render(metrics, output, 'code_changes'))
     if push_metrics:
         try:
             prom.push_codechanges(metrics,

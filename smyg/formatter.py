@@ -3,16 +3,16 @@
 from typing import Mapping
 
 import os
-import jinja2
 import json
+import jinja2
 
 
 class FormatterError(Exception):
     '''Default formatter exception'''
-    pass
 
 
-def format(value: Mapping, output: str, template_name: str = None):
+def render(value: Mapping, output: str, template_name: str = None) -> str:
+    '''Convert metrics to output format'''
     if output == 'text':
         path = os.path.join(os.path.dirname(__file__), 'templates')
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(
