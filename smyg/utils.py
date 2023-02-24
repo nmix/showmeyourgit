@@ -4,7 +4,8 @@
 
     convert_to_edge - translate list of vcs.ModifiedFile to vsc.EdgeFile
 '''
-from typing import List
+from __future__ import annotations
+
 from datetime import datetime
 import re
 
@@ -27,8 +28,8 @@ def date_from_relative(past: str) -> datetime:
     return datetime.now() - relativedelta.relativedelta(**period)
 
 
-def convert_to_edge(modified_files: List[vcs.ModifiedFile]
-                    ) -> List[vcs.EdgeFile]:
+def convert_to_edge(modified_files: list[vcs.ModifiedFile]
+                    ) -> list[vcs.EdgeFile]:
     '''convert modified files to edge files'''
     edge_files = []
     for modified_file in modified_files:

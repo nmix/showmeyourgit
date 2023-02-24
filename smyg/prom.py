@@ -1,9 +1,10 @@
 '''Prometheus client'''
+from __future__ import annotations
 
 import os
+
 import prometheus_client
 
-from typing import Mapping, List, Union
 
 PUSHGATEWAY_URL = os.getenv('PUSHGATEWAY_URL', 'http://localhost:9091')
 PUSHGATEWAY_USERNAME = os.getenv('PUSHGATEWAY_USERNAME')
@@ -38,15 +39,9 @@ COMMIT_CHANGED_FILES = prometheus_client.Counter(
 
 class PushGatewayError(Exception):
     '''Default exception for prom module'''
-    pass
 
 
-# def push_commits(commits: List):
-#     for commit in commits:
-#         push_commit(commit)
-
-
-def push_commits(values: Union[Mapping, List]):
+def push_commits(values: list | dict):
     '''Push commit values to pushgateway'''
     if not PUSHGATEWAY_URL:
         raise PushGatewayError(
@@ -68,7 +63,7 @@ def push_commits(values: Union[Mapping, List]):
             registry=registry)
 
 
-def push_codechanges(value: Mapping,
+def push_codechanges(value: dict,
                      metric_name: str = 'codechanges',
                      suffix: str = ''):
     '''Push codechurn values to pushgateway

@@ -2,12 +2,12 @@
 and support classes.
 '''
 
+from __future__ import annotations
+
 import dataclasses
 import datetime
 import enum
 import hashlib
-
-from typing import List, Optional, Tuple
 
 
 def ratio(added: int, deleted: int) -> float:
@@ -48,6 +48,21 @@ class SourceLine:
         return f'{self.number:5d}: {self.value}'
 
 
+def parsed_diff_to_source_lines(parsed_diff: list[tuple]) -> list[SourceLine]:
+    '''Convert added or deleted lines to list of SourceLine instances
+
+    Args:
+        parsed_diff: added or deleted sequence of pairs:
+            [(LINE_NUM, LINE_TEXT), ...]
+    Returns:
+        list of SourceLine instances.
+    '''
+    lines = []
+    for diff in parsed_diff:
+        lines.append(SourceLine(number=diff[0], value=diff[1]))
+    return lines
+
+
 class ModifiedFile:
     '''Modified file info with added or deleted lines
 
@@ -62,10 +77,10 @@ class ModifiedFile:
     '''
 
     def __init__(self,
-                 old_path: Optional[str],
-                 new_path: Optional[str],
-                 added_lines: List[Tuple] = None,
-                 deleted_lines: List[Tuple] = None):
+                 old_path: str | None,
+                 new_path: str | None,
+                 added_lines: list[tuple] = None,
+                 deleted_lines: list[tuple] = None):
         '''Object initalizer
 
         Args:
@@ -77,8 +92,8 @@ class ModifiedFile:
         '''
         self.old_path = old_path
         self.new_path = new_path
-        self.added_lines = self._from_parsed_diff(added_lines or [])
-        self.deleted_lines = self._from_parsed_diff(deleted_lines or [])
+        self.added_lines = parsed_diff_to_source_lines(added_lines or [])
+        self.deleted_lines = parsed_diff_to_source_lines(deleted_lines or [])
 
     @property
     def added(self) -> int:
@@ -121,21 +136,6 @@ class ModifiedFile:
         if self.old_path and self.new_path and self.changed_lines_total == 0:
             return ChangeType.RENAMED
         return ChangeType.UNDEFINED
-
-    def _from_parsed_diff(self, parsed_diff: List[Tuple]
-                          ) -> List[SourceLine]:
-        '''Convert added or deleted lines to list of SourceLine instances
-
-        Args:
-            parsed_diff: added or deleted sequence of pairs:
-                [(LINE_NUM, LINE_TEXT), ...]
-        Returns:
-            List of SourceLine instances.
-        '''
-        lines = []
-        for diff in parsed_diff:
-            lines.append(SourceLine(number=diff[0], value=diff[1]))
-        return lines
 
     def __repr__(self) -> str:
         if self.path_changed:
@@ -210,11 +210,12 @@ class EdgeFile:
         return self.path
 
 
+# pylint: disable=too-many-instance-attributes
 @dataclasses.dataclass
 class Commit:
     '''A Commit object has all the information of a Git commit'''
 
-    hash: str
+    sha: str
     msg: str
     author_name: str
     author_email: str
@@ -226,12 +227,14 @@ class Commit:
     added: int
     deleted: int
     changed_files: int
-    branches: List
+    branches: list
 
-    def as_dict(self):
+    def as_dict(self) -> dict:
+        '''Represent instance as dict'''
         return dataclasses.asdict(self)
 
-    def as_seriable_dict(self):
+    def as_seriable_dict(self) -> dict:
+        '''Represent instance as seriable dict'''
         seriable = dict(self.as_dict())
         seriable.update(
                 {'author_date': str(self.author_date),
@@ -241,4 +244,4 @@ class Commit:
         return seriable
 
     def __repr__(self):
-        return f'{self.hash} {self.msg}'
+        return f'{self.sha} {self.msg}'

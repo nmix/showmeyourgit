@@ -1,9 +1,9 @@
-'''CLI smyg module'''
+'''command line interface'''
+from __future__ import annotations
 
 import datetime as dt
 import os
 import typer
-from typing import Optional
 
 from smyg import __app_name__, __version__
 from smyg import binding
@@ -32,9 +32,11 @@ def branch_commits(
             None,
             help='show commits for specified branch'
             ),
-        format: str =
+        output: str =
         typer.Option(
             'text',
+            '--output',
+            '-o',
             help='output format [text/json]'),
         push_metrics: bool =
         typer.Option(
@@ -55,26 +57,26 @@ def branch_commits(
     # --- get commits bundle
     try:
         commits = binding.branch_commits(path, sha=sha, branch=branch)
-    except binding.BindingError as e:
-        raise typer.Exit(e)
+    except binding.BindingError as err:
+        raise typer.Exit(err)
 
     typer.echo(
-            formatter.format(
+            formatter.render(
                 [commit.as_seriable_dict() for commit in commits],
-                format,
+                output,
                 'commits'
                 ))
 
     if push_metrics:
         try:
             prom.push_commits([commit.as_dict() for commit in commits])
-        except prom.PushGatewayError as e:
-            raise typer.Exit(e)
+        except prom.PushGatewayError as err:
+            raise typer.Exit(err)
 
 
 @app.command()
 def commit(
-        hash: str =
+        sha: str =
         typer.Argument(
             None,
             help='hash of the commit'),
@@ -88,9 +90,11 @@ def commit(
             None,
             help='show commit info in last commit in branch'
             ),
-        format: str =
+        output: str =
         typer.Option(
             'text',
+            '--output',
+            '-o',
             help='output format [text/json]'),
         push_metrics: bool =
         typer.Option(
@@ -100,15 +104,16 @@ def commit(
     '''Show commit info'''
     path = os.path.abspath(repo_path)
     try:
-        commit = binding.commit(path, hash=hash, branch=branch)
-    except binding.BindingError as e:
-        raise typer.Exit(e)
-    typer.echo(formatter.format(commit.as_seriable_dict(), format, 'commit'))
+        vcs_commit = binding.find_commit(path, sha=sha, branch=branch)
+    except binding.BindingError as err:
+        raise typer.Exit(err)
+    typer.echo(
+            formatter.render(vcs_commit.as_seriable_dict(), output, 'commit'))
     if push_metrics:
         try:
-            prom.push_commits(commit.as_seriable_dict())
-        except prom.PushGatewayError as e:
-            raise typer.Exit(e)
+            prom.push_commits(vcs_commit.as_seriable_dict())
+        except prom.PushGatewayError as err:
+            raise typer.Exit(err)
 
 
 @app.command()
@@ -118,7 +123,7 @@ def codechanges(
             '.',
             '--repo-path',
             help='path to git repo'),
-        since: dt.datetime =
+        from_date: dt.datetime =
         typer.Option(
             None,
             help='only commits after this date will be analyzed',
@@ -136,7 +141,7 @@ def codechanges(
             '--from-tag',
             help='only commits after this commit tag will be analyzed',
             rich_help_panel='FROM'),
-        to: dt.datetime =
+        to_date: dt.datetime =
         typer.Option(
             None,
             help='only commits up to this date will be analyzed',
@@ -162,9 +167,11 @@ def codechanges(
         typer.Option(
             False,
             help='show detail code churn per each file'),
-        format: str =
+        output: str =
         typer.Option(
             'text',
+            '--output',
+            '-o',
             help='output format [text/json]'),
         for_past: str =
         typer.Option(
@@ -176,31 +183,32 @@ def codechanges(
             help='push metrics to prometheus gateway'),
             ):
     '''This metric measures the code changes of each files.'''
+
     path = os.path.abspath(repo_path)
     if for_past:
         try:
-            since = utils.date_from_relative(for_past)
-        except ValueError as e:
-            raise typer.Exit(e)
+            from_date = utils.date_from_relative(for_past)
+        except ValueError as err:
+            raise typer.Exit(err)
     try:
         modified_files = binding.modified_files(path,
-                                                since=since,
+                                                since=from_date,
                                                 from_commit=from_commit,
                                                 from_tag=from_tag,
-                                                to=to,
+                                                to=to_date,
                                                 to_commit=to_commit,
                                                 to_tag=to_tag,
                                                 only_in_branch=branch)
-    except binding.BindingError as e:
-        raise typer.Exit(e)
+    except binding.BindingError as err:
+        raise typer.Exit(err)
     metrics = cch.CodeChanges(modified_files).calculate(detail=detail)
-    typer.echo(formatter.format(metrics, format, 'code_changes'))
+    typer.echo(formatter.render(metrics, output, 'code_changes'))
     if push_metrics:
         try:
             prom.push_codechanges(metrics,
                                   suffix=for_past)
-        except prom.PushGatewayError as e:
-            raise typer.Exit(e)
+        except prom.PushGatewayError as err:
+            raise typer.Exit(err)
 
 
 @app.command()
@@ -210,7 +218,7 @@ def codechurn(
             '.',
             '--repo-path',
             help='path to git repo'),
-        since: dt.datetime =
+        from_date: dt.datetime =
         typer.Option(
             None,
             help='only commits after this date will be analyzed',
@@ -228,7 +236,7 @@ def codechurn(
             '--from-tag',
             help='only commits after this commit tag will be analyzed',
             rich_help_panel='FROM'),
-        to: dt.datetime =
+        to_date: dt.datetime =
         typer.Option(
             None,
             help='only commits up to this date will be analyzed',
@@ -254,9 +262,11 @@ def codechurn(
         typer.Option(
             False,
             help='show detail code churn per each file'),
-        format: str =
+        output: str =
         typer.Option(
             'text',
+            '--output',
+            '-o',
             help='output format [text/json]'),
         for_past: str =
         typer.Option(
@@ -268,33 +278,34 @@ def codechurn(
             help='push metrics to prometheus gateway'),
         ):
     '''This metric measures the code churns of each file.'''
+
     path = os.path.abspath(repo_path)
     if for_past:
         try:
-            since = utils.date_from_relative(for_past)
-        except ValueError as e:
-            raise typer.Exit(e)
+            from_date = utils.date_from_relative(for_past)
+        except ValueError as err:
+            raise typer.Exit(err)
     try:
         modified_files = binding.modified_files(path,
-                                                since=since,
+                                                since=from_date,
                                                 from_commit=from_commit,
                                                 from_tag=from_tag,
-                                                to=to,
+                                                to=to_date,
                                                 to_commit=to_commit,
                                                 to_tag=to_tag,
                                                 only_in_branch=branch)
-    except binding.BindingError as e:
-        raise typer.Exit(e)
+    except binding.BindingError as err:
+        raise typer.Exit(err)
     code_churn = cc.CodeChurn(modified_files)
     metrics = code_churn.calculate(detail=detail)
-    typer.echo(formatter.format(metrics, format, 'code_changes'))
+    typer.echo(formatter.render(metrics, output, 'code_changes'))
     if push_metrics:
         try:
             prom.push_codechanges(metrics,
                                   metric_name='codechurn',
                                   suffix=for_past)
-        except prom.PushGatewayError as e:
-            raise typer.Exit(e)
+        except prom.PushGatewayError as err:
+            raise typer.Exit(err)
 
 
 def _version_callback(value: bool) -> None:
@@ -305,7 +316,7 @@ def _version_callback(value: bool) -> None:
 
 @app.callback()
 def main(
-    version: Optional[bool] = typer.Option(
+    version=typer.Option(
         None,
         '--version',
         '-v',
@@ -314,5 +325,5 @@ def main(
         is_eager=True,
     )
 ) -> None:
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,missing-function-docstring
     return

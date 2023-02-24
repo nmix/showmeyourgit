@@ -1,24 +1,23 @@
 '''Package bindings'''
 
-import sys
-import pydriller
-import git
+from __future__ import annotations
 
-from typing import Optional, List
+import sys
+import git
+import pydriller
 
 from smyg import vcs
 
 
 class BindingError(Exception):
     '''Default exception for binding module'''
-    pass
 
 
 def branch_commits(
         path: str,
-        sha: Optional[str] = None,
-        branch: Optional[str] = None
-        ) -> List[vcs.Commit]:
+        sha: str | None = None,
+        branch: str | None = None
+        ) -> list[vcs.Commit]:
     '''Find bundle of commits for a branch
 
     Args:
@@ -34,7 +33,7 @@ def branch_commits(
                                     from_commit=sha,
                                     only_in_branch=branch,
                                     order='reverse')
-        commits = [commit for commit in repo.traverse_commits()][:-1]
+        commits = list(repo.traverse_commits())[:-1]
     else:
         repo = pydriller.Repository(path,
                                     only_in_branch=branch,
@@ -49,14 +48,14 @@ def branch_commits(
     return [_create_vcs_commit(commit) for commit in commits]
 
 
-def commit(
+def find_commit(
         path: str,
-        hash: Optional[str] = None,
-        branch: Optional[str] = None):
+        sha: str | None = None,
+        branch: str | None = None):
     '''Find commit in history'''
-    if hash:
+    if sha:
         repo = pydriller.Repository(path,
-                                    single=hash,
+                                    single=sha,
                                     only_in_branch=branch,
                                     order='reverse')
     else:
@@ -66,7 +65,7 @@ def commit(
     try:
         commit = next(repo.traverse_commits())
     except git.GitCommandError as e:
-        raise BindingError(e)
+        raise BindingError from e
     return _create_vcs_commit(commit)
 
 
@@ -81,7 +80,7 @@ def modified_files(path: str, **kargs):
     try:
         next(pydriller.Repository(path, **kargs).traverse_commits())
     except git.GitCommandError as e:
-        raise BindingError(e)
+        raise BindingError from e
     except StopIteration:
         pass
     # ---
@@ -90,7 +89,7 @@ def modified_files(path: str, **kargs):
             commit_files = commit.modified_files
         except ValueError as e:
             print(f'Error occurred while processing the commit '
-                  f'{commit.hash}: {e}', file=sys.stderr)
+                  f'{commit.sha}: {e}', file=sys.stderr)
             continue
         for file in commit_files:
             files.append(
@@ -104,7 +103,7 @@ def modified_files(path: str, **kargs):
 
 def _create_vcs_commit(commit: pydriller.Commit) -> vcs.Commit:
     return vcs.Commit(
-            hash=commit.hash,
+            sha=commit.hash,
             msg=commit.msg,
             author_name=commit.author.name,
             author_email=commit.author.email,

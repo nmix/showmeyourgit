@@ -36,7 +36,7 @@ Deleted lines:      0
 Changed files:      1
 
 # --- show last commit info in json format
-$ smyg commit --format json | jq
+$ smyg commit --output json | jq
 {
   "hash": "cdcb7c6ac0b92b1e16cfdd6f1e6abf0ed8f73e48",
   "msg": "update README",
@@ -79,7 +79,7 @@ $ smyg branch-commits --help
 
 # --- if you just clone the example repository, the entire commit list will be displayed (from Initial commit)
 #     this is because only one branch is locally received and all commits belongs to it
-smyg branch-commits
+$ smyg branch-commits
 
 cdcb7c6ac0b92b1e16cfdd6f1e6abf0ed8f73e48 | update README
 2023-02-20 16:42:41+03:00 | Nikolay Mikhaylichenko
@@ -99,9 +99,9 @@ Changed files:      1
 
 # --- checkout branch-3 and repeat the command
 #     we get only 3 commits for the branch
-git checkout branch-3
+$ git checkout branch-3
 Switched to a new branch 'branch-3'
-smyg branch-commits
+$ smyg branch-commits
 
 414d13a92998f9de86dd60d41f05f092e64350f3 | commit 3-3
 2023-02-20 16:32:42+03:00 | Nikolay Mikhaylichenko
@@ -125,7 +125,7 @@ Deleted lines:      0
 Changed files:      1
 
 # --- branch commits with previous SHA
-git checkout main
+$ git checkout main
 smyg branch-commits 5317cd6080033ae5a9ce3166095745e862a52c9d
 
 cdcb7c6ac0b92b1e16cfdd6f1e6abf0ed8f73e48 | update README
@@ -161,13 +161,13 @@ Show total added and deleted lines count for current ref.
 $ smyg codechanges --help
 
 # --- changes for current ref
-smyg codechanges
+$ smyg codechanges
 Ratio (%):         11
 Added lines:      107
 Deleted lines:     12
 
 # --- code changes between commits
-smyg codechanges --from-commit 3a085582e8df7c1d622c412eb54eb5ee96e82c48  \
+$ smyg codechanges --from-commit 3a085582e8df7c1d622c412eb54eb5ee96e82c48  \
   --to-commit bbead3ba03de57909ee622fac4b973de180f5e5f
 Ratio (%):         42
 Added lines:       26
@@ -191,8 +191,8 @@ Added lines:      107
 Deleted lines:     12
 
 # --- churn from specified commit (not equal with codechanges, it is expected)
-smyg codechurn --from-commit 44c6334f38fe796f38c39e1d11a8d19925684926 \
-  --to-commit fccfa86625353409018ccd467f0050b57152656e
+$ smyg codechurn --from-commit 44c6334f38fe796f38c39e1d11a8d19925684926 \
+    --to-commit fccfa86625353409018ccd467f0050b57152656e
 Ratio (%):         23
 Added lines:       26
 Deleted lines:      6
@@ -208,12 +208,12 @@ Recommended to use Aggregation Gateway like https://github.com/zapier/prom-aggre
 You must specify environment variables `PUSHGATEWAY_URL` and `PROJECT_NAME` and command option `--push-metrics` to send metrics. For basic auth access specify `PUSHGATEWAY_USERNAME` and `PUSHGATEWAY_PASSWORD`.
 
 ```bash
-git checkout main
+$ git checkout main
 
-docker run --rm -p 8080:80 cross-docking-docker.k8s.tander.ru/iac/prom-aggregation-gateway:v0.7.0
+$ docker run --rm -p 8080:80 ghcr.io/zapier/prom-aggregation-gateway:v0.7.0
 
-PUSHGATEWAY_URL=localhost:8080 PROJECT_NAME=example_project \
-  smyg commit --push-metrics
+$ PUSHGATEWAY_URL=localhost:8080 PROJECT_NAME=example_project \
+    smyg commit --push-metrics
 cdcb7c6ac0b92b1e16cfdd6f1e6abf0ed8f73e48 | update README
 2023-02-20 16:42:41+03:00 | Nikolay Mikhaylichenko
 ['main']
@@ -221,7 +221,7 @@ Added lines:       26
 Deleted lines:      0
 Changed files:      1
 
-curl localhost:8080/metrics
+$ curl localhost:8080/metrics
 # HELP commit_added_lines_total Number of added lines in commit
 # TYPE commit_added_lines_total counter
 commit_added_lines_total{author_email="nn.mikh@yandex.ru",author_name="Nikolay Mikhaylichenko",job="showmeyourgit",project_name="example_project"} 26
@@ -239,11 +239,11 @@ commits_total{author_email="nn.mikh@yandex.ru",author_name="Nikolay Mikhaylichen
 ## Develop & Test
 
 ```bash
-git clone git@github.com:nmix/showmeyourgit.git
-cd showmeyourgit
-poetry install
-poetry shell
-pytest
+$ git clone git@github.com:nmix/showmeyourgit.git
+$ cd showmeyourgit
+$ poetry install
+$ poetry shell
+$ pytest
 ```
 
 ## Contributing
