@@ -2,12 +2,12 @@
 and support classes.
 '''
 
+from __future__ import annotations
+
 import dataclasses
 import datetime
 import enum
 import hashlib
-
-from typing import List, Optional, Tuple, Mapping
 
 
 def ratio(added: int, deleted: int) -> float:
@@ -48,14 +48,14 @@ class SourceLine:
         return f'{self.number:5d}: {self.value}'
 
 
-def parsed_diff_to_source_lines(parsed_diff: List[Tuple]) -> List[SourceLine]:
+def parsed_diff_to_source_lines(parsed_diff: list[tuple]) -> list[SourceLine]:
     '''Convert added or deleted lines to list of SourceLine instances
 
     Args:
         parsed_diff: added or deleted sequence of pairs:
             [(LINE_NUM, LINE_TEXT), ...]
     Returns:
-        List of SourceLine instances.
+        list of SourceLine instances.
     '''
     lines = []
     for diff in parsed_diff:
@@ -77,10 +77,10 @@ class ModifiedFile:
     '''
 
     def __init__(self,
-                 old_path: Optional[str],
-                 new_path: Optional[str],
-                 added_lines: List[Tuple] = None,
-                 deleted_lines: List[Tuple] = None):
+                 old_path: str | None,
+                 new_path: str | None,
+                 added_lines: list[tuple] = None,
+                 deleted_lines: list[tuple] = None):
         '''Object initalizer
 
         Args:
@@ -227,13 +227,13 @@ class Commit:
     added: int
     deleted: int
     changed_files: int
-    branches: List
+    branches: list
 
-    def as_dict(self) -> Mapping:
+    def as_dict(self) -> dict:
         '''Represent instance as dict'''
         return dataclasses.asdict(self)
 
-    def as_seriable_dict(self) -> Mapping:
+    def as_seriable_dict(self) -> dict:
         '''Represent instance as seriable dict'''
         seriable = dict(self.as_dict())
         seriable.update(

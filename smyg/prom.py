@@ -1,6 +1,6 @@
 '''Prometheus client'''
+from __future__ import annotations
 
-from typing import Mapping, List, Union
 import os
 
 import prometheus_client
@@ -41,7 +41,7 @@ class PushGatewayError(Exception):
     '''Default exception for prom module'''
 
 
-def push_commits(values: Union[Mapping, List]):
+def push_commits(values: list | dict):
     '''Push commit values to pushgateway'''
     if not PUSHGATEWAY_URL:
         raise PushGatewayError(
@@ -63,7 +63,7 @@ def push_commits(values: Union[Mapping, List]):
             registry=registry)
 
 
-def push_codechanges(value: Mapping,
+def push_codechanges(value: dict,
                      metric_name: str = 'codechanges',
                      suffix: str = ''):
     '''Push codechurn values to pushgateway

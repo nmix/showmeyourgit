@@ -1,6 +1,6 @@
 '''Package bindings'''
 
-from typing import Optional, List
+from __future__ import annotations
 
 import sys
 import git
@@ -15,9 +15,9 @@ class BindingError(Exception):
 
 def branch_commits(
         path: str,
-        sha: Optional[str] = None,
-        branch: Optional[str] = None
-        ) -> List[vcs.Commit]:
+        sha: str | None = None,
+        branch: str | None = None
+        ) -> list[vcs.Commit]:
     '''Find bundle of commits for a branch
 
     Args:
@@ -50,8 +50,8 @@ def branch_commits(
 
 def find_commit(
         path: str,
-        sha: Optional[str] = None,
-        branch: Optional[str] = None):
+        sha: str | None = None,
+        branch: str | None = None):
     '''Find commit in history'''
     if sha:
         repo = pydriller.Repository(path,

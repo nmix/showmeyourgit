@@ -1,6 +1,6 @@
 '''Covert metrics or instance dictionaries to specified format'''
 
-from typing import Mapping
+from __future__ import annotations
 
 import os
 import json
@@ -11,7 +11,7 @@ class FormatterError(Exception):
     '''Default formatter exception'''
 
 
-def render(value: Mapping, output: str, template_name: str = None) -> str:
+def render(value: dict, output: str, template_name: str = None) -> str:
     '''Convert metrics to output format'''
     if output == 'text':
         path = os.path.join(os.path.dirname(__file__), 'templates')

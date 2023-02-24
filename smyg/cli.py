@@ -1,6 +1,5 @@
-'''CLI smyg module'''
-
-from typing import Optional
+'''command line interface'''
+from __future__ import annotations
 
 import datetime as dt
 import os
@@ -317,7 +316,7 @@ def _version_callback(value: bool) -> None:
 
 @app.callback()
 def main(
-    version: Optional[bool] = typer.Option(
+    version=typer.Option(
         None,
         '--version',
         '-v',

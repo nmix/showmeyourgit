@@ -210,7 +210,7 @@ You must specify environment variables `PUSHGATEWAY_URL` and `PROJECT_NAME` and 
 ```bash
 $ git checkout main
 
-$ docker run --rm -p 8080:80 prom-aggregation-gateway:v0.7.0
+$ docker run --rm -p 8080:80 ghcr.io/zapier/prom-aggregation-gateway:v0.7.0
 
 $ PUSHGATEWAY_URL=localhost:8080 PROJECT_NAME=example_project \
     smyg commit --push-metrics
