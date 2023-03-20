@@ -32,17 +32,19 @@ def branch_commits(
         repo = pydriller.Repository(path,
                                     from_commit=sha,
                                     only_in_branch=branch,
+                                    only_no_merge=True,
                                     order='reverse')
         commits = list(repo.traverse_commits())[:-1]
     else:
         repo = pydriller.Repository(path,
                                     only_in_branch=branch,
+                                    only_no_merge=True,
                                     order='reverse')
         commits = list(repo.traverse_commits())
     # ---
     uniq_commits = []
     for commit in commits:
-        if commit.branches == [branch]:
+        if len(commit.branches):
             uniq_commits.append(commit)
     # ---
     return [_create_vcs_commit(commit) for commit in uniq_commits]
