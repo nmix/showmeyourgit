@@ -4,7 +4,7 @@ build-backend = 'poetry.core.masonry.api'
 
 [tool.poetry]
 name = 'smyg'
-version = '0.5.0'
+version = '0.5.1'
 description = 'git metric calculation'
 
 license = 'MIT'
@@ -41,7 +41,7 @@ pytest = '*'
 pytest-cov = '*'
 ipython = '*'
 pylint = '^2.16'
-pytest-freezegun = '*'
+freezegun = "^1.2.2"
 
 [tool.poetry.scripts]
 smyg = 'smyg.cli:app'

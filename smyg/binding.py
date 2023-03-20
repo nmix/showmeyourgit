@@ -38,14 +38,14 @@ def branch_commits(
         repo = pydriller.Repository(path,
                                     only_in_branch=branch,
                                     order='reverse')
-        commits = []
-        for commit in repo.traverse_commits():
-            if len(commit.branches) == 1:
-                commits.append(commit)
-            else:
-                break
+        commits = list(repo.traverse_commits())
     # ---
-    return [_create_vcs_commit(commit) for commit in commits]
+    uniq_commits = []
+    for commit in commits:
+        if commit.branches == [branch]:
+            uniq_commits.append(commit)
+    # ---
+    return [_create_vcs_commit(commit) for commit in uniq_commits]
 
 
 def find_commit(

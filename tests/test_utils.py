@@ -1,10 +1,11 @@
 import pytest
+from freezegun import freeze_time
 from datetime import datetime
 
 from smyg import utils
 
 
-@pytest.mark.freeze_time('2023-02-13')
+@freeze_time('2023-02-13')
 @pytest.mark.parametrize(
         'past, past_date',
         [
