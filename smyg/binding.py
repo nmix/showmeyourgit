@@ -44,7 +44,7 @@ def branch_commits(
     # ---
     uniq_commits = []
     for commit in commits:
-        if len(commit.branches):
+        if len(commit.branches) == 1:
             uniq_commits.append(commit)
     # ---
     return [_create_vcs_commit(commit) for commit in uniq_commits]
