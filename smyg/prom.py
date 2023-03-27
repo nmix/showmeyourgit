@@ -13,7 +13,7 @@ PROJECT_NAME = os.getenv('PROJECT_NAME')
 
 registry = prometheus_client.CollectorRegistry()
 
-COMMIT_LABELS = ['author_name', 'author_email', 'project_name']
+COMMIT_LABELS = ['author_email', 'project_name']
 
 COMMITS = prometheus_client.Counter(
         'commits',
@@ -50,8 +50,7 @@ def push_commits(values: list | dict):
     if not isinstance(values, list):
         values = [values]
     for value in values:
-        labels = (value.get('author_name'),
-                  value.get('author_email'),
+        labels = (value.get('author_email'),
                   PROJECT_NAME)
         COMMITS.labels(*labels).inc()
         COMMIT_ADDED_LINES.labels(*labels).inc(value.get('added'))
