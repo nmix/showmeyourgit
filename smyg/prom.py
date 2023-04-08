@@ -59,7 +59,8 @@ def push_commits(values: list | dict):
     prometheus_client.push_to_gateway(
             PUSHGATEWAY_URL,
             job='showmeyourgit',
-            registry=registry)
+            registry=registry,
+            handler=push_gateway_handler)
 
 
 def push_codechanges(value: dict,
@@ -97,7 +98,8 @@ def push_codechanges(value: dict,
     prometheus_client.push_to_gateway(
             PUSHGATEWAY_URL,
             job=f'showmeyourgit-{PROJECT_NAME}-{metric_name}{suffix}',
-            registry=registry)
+            registry=registry,
+            handler=push_gateway_handler)
 
 
 def push_gateway_handler(url, method, timeout, headers, data):
