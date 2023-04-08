@@ -316,14 +316,14 @@ def _version_callback(value: bool) -> None:
 
 @app.callback()
 def main(
-    version=typer.Option(
-        None,
-        '--version',
-        '-v',
-        help="show the application's version and exit",
-        callback=_version_callback,
-        is_eager=True,
-    )
+        version: bool = typer.Option(
+            None,
+            '--version',
+            '-v',
+            help="show the application's version and exit",
+            callback=_version_callback,
+            is_eager=True,
+            )
 ) -> None:
     # pylint: disable=unused-argument,missing-function-docstring
     return
