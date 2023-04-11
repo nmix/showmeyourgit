@@ -228,6 +228,7 @@ class Commit:
     deleted: int
     changed_files: int
     branches: list
+    parents: list
 
     def as_dict(self) -> dict:
         '''Represent instance as dict'''

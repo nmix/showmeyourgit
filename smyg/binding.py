@@ -34,7 +34,7 @@ def branch_commits(
                                     only_in_branch=branch,
                                     only_no_merge=True,
                                     order='reverse')
-        commits = list(repo.traverse_commits())[:-1]
+        commits = list(repo.traverse_commits())
     else:
         repo = pydriller.Repository(path,
                                     only_in_branch=branch,
@@ -118,4 +118,5 @@ def _create_vcs_commit(commit: pydriller.Commit) -> vcs.Commit:
             deleted=commit.deletions,
             changed_files=commit.files,
             branches=commit.branches,
+            parents=commit.parents,
             )
